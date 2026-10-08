@@ -1,0 +1,13 @@
+;; The server tests on babashka, which has http-kit and transit built in.
+{:paths ["server/src" "server/test"]
+ :tasks
+ {test {:doc "Runs the server tests."
+        :requires ([clojure.test :as t])
+        :task (let [namespaces '[rframes.command-test
+                                 rframes.http-test
+                                 rframes.replicant-test
+                                 rframes.sse-test]]
+                (apply require namespaces)
+                (let [{:keys [fail error]} (apply t/run-tests namespaces)]
+                  (when (pos? (+ fail error))
+                    (System/exit 1))))}}}

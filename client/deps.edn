@@ -1,0 +1,7 @@
+;; The browser half: the Replicant runtime of parts-cljs (store, dispatch
+;; and the command endpoint), which brings Replicant and transit-cljs.
+{:paths ["src"]
+ :deps {io.github.simplemono/parts-cljs$replicant
+        {:git/url "https://github.com/simplemono/parts-cljs.git"
+         :git/sha "e1812e04f21bb1b903ece32814ef7acfa84948be"
+         :deps/root "replicant"}}}

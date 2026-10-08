@@ -1,0 +1,4 @@
+;; The browser bundle only: clojure -M -m shadow.cljs.devtools.cli release browser
+{:paths ["src"]
+ :deps {thheller/shadow-cljs {:mvn/version "3.4.12"}
+        io.github.simplemono/rframes$client {:local/root "../client"}}}
