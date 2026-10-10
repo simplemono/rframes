@@ -82,19 +82,32 @@
         (when-let [^js element (stick-to-end)]
           (set! (.-scrollTop element) (.-scrollHeight element)))))))
 
+(defn- command-endpoint
+  "`command` next to the page: /command for a page at /, /app/command for
+  one at /app/ or /app/index.html."
+  []
+  (let [path js/location.pathname]
+    (str (subs path 0 (inc (.lastIndexOf path "/"))) "command")))
+
 (defn start!
   "Mounts the runtime on the root node of the shim and opens the view
   stream. `register` holds the client entries of the app: aliases
   (:ui.alias/kind), action handlers (:ui.action/kind), enrichers and
   predicates, see parts.replicant.core. They follow the built-in ones."
-  [{:keys [register]}]
+  [{:keys [register] :as opts}]
   (when-let [root (js/document.querySelector "[data-rframes-view]")]
     (let [register (full-register register)]
       (register-aliases! register)
       (let [w (-> {:ui/get-register (constantly register)
                    :ui/root root
                    :ui/render! render!
-                   :ui/store state/store}
+                   :ui/store state/store
+                   ;; Like the stream, commands go next to the page: a
+                   ;; page at /app/ posts to /app/command, so an app can
+                   ;; live behind a path prefix, e.g. proxied into
+                   ;; another app. Any :ui/* key of the options wins.
+                   :ui/command-endpoint (command-endpoint)}
+                  (merge (dissoc opts :register))
                   (core/add-ui-log)
                   (core/add-event-handler)
                   (core/add-dispatch!)

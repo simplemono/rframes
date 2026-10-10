@@ -81,7 +81,7 @@ a redefined var is live at once. Four kinds of entries matter here:
 ```
 
 `rframes.replicant/expand` turns the shim and render entries into routes,
-`rframes.command/register` is the `/command` route, and `rframes.http/ring-handler`
+`rframes.command/register` is the `/command` route (the browser posts to `command` next to the page, so a page at `/app/` posts to `/app/command`; `:ui/command-endpoint` in `init!` overrides it), and `rframes.http/ring-handler`
 serves the lot:
 
 ```clojure
