@@ -206,6 +206,18 @@ A frame equal to the last one is not sent. The Object checks before it
 sends, and the Worker checks again, because the Object forgets what it
 sent when it sleeps.
 
+A quiet stream carries a comment line every 25 s, `:heartbeat-ms`. It
+keeps whatever sits between the Worker and the browser from cutting an
+idle connection, and it is also how the relay learns that a tab is
+gone. A client that reset its connection was noticed within a second.
+Chromium closing a tab over HTTP/3 was not, the relay found out when it
+wrote the next heartbeat, 24 s later. Under `wrangler dev` it takes two
+heartbeats. So a gone tab can stay among the Object's connections for
+up to one heartbeat. It costs nothing there, since the heartbeat never
+reaches the Object and an orphaned socket does not keep it awake, but a
+page that shows who is connected lags by that much. Such a page wants a
+shorter heartbeat.
+
 ## wrangler.jsonc and the build
 
 ```jsonc
@@ -220,12 +232,9 @@ sent when it sleeps.
 ```
 
 `nodejs_compat` is for `node:zlib`, the encoder of the stream.
-`enable_request_signal` lets the Worker see a tab go at once, so it
-closes its socket to the Object within a second. Without the flag the
-relay finds out when it cannot write a heartbeat, which takes up to two
-of them. The flag is the default from compatibility date 2026-11-17.
-`wrangler dev` hides the disconnect either way, there it is always the
-heartbeat. The static assets carry the page's script and stylesheet, and Cloudflare
+`enable_request_signal` aborts the request's signal when the client
+goes, and the relay then closes its socket to the Object. The flag is
+the default from compatibility date 2026-11-17. The static assets carry the page's script and stylesheet, and Cloudflare
 serves them before the Worker runs. The Vite plugin of clojurific
 exports the handler and the class from one bundle. `example/` has both
 Vite configs.
