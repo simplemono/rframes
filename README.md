@@ -38,8 +38,8 @@ it was a port of the UI of lith, a chat UI for a coding agent.
 
 ## Install
 
-The repository has two modules, as
-[parts-cljs](https://github.com/simplemono/parts-cljs) has. The server
+The repository is split into modules, as
+[parts-cljs](https://github.com/simplemono/parts-cljs) is. The server
 module goes into `bb.edn` or `deps.edn`:
 
 ```clojure
@@ -61,6 +61,9 @@ io.github.simplemono/rframes$client
 
 While working on both at once, `{:local/root "../rframes/server"}` and
 `{:local/root "../rframes/client"}` take the checkout instead.
+
+A third module, `worker/`, is the server half for a Cloudflare Worker,
+see [On a Cloudflare Worker](#on-a-cloudflare-worker).
 
 ## The server
 
@@ -207,6 +210,17 @@ away from it, which is what a chat or a log wants.
 - `:replicant/key` wherever recreating a node is destructive: an iframe, a
   player, a list that reorders.
 
+## On a Cloudflare Worker
+
+`worker/` runs the same loop on a Cloudflare Worker with a Durable
+Object, compiled by [clojurific](https://github.com/WhimsicalCode/clojurific).
+The register entries, the view functions, the command functions and the
+browser half are the ones described above. The Object holds the state
+and renders the views, the Worker holds the frame streams, and the
+Object sleeps between two changes while the pages stay connected.
+[worker/README.md](worker/README.md) says how to use it and what a
+Durable Object asks of an app.
+
 ## The example
 
 `example/` is a counter and a list of notes, shared by every tab that has
@@ -229,4 +243,7 @@ connection.
 ```bash
 bb test                        # the server tests on babashka
 cd server && clojure -M:test   # the same on the JVM
+
+cd worker && npm ci && npm test            # the Worker module under Node
+cd worker/example && npm ci && npm test    # its example inside workerd
 ```

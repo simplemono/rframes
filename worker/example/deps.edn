@@ -1,0 +1,6 @@
+;; Both bundles of the example: the Worker with its Object (the worker
+;; module) and the page's script (the client module).
+{:paths ["src"]
+ :deps {io.github.simplemono/rframes$worker {:local/root ".."}
+        io.github.simplemono/rframes$client {:local/root "../../client"}
+        com.whimsical/clojurific {:mvn/version "0.12.15"}}}

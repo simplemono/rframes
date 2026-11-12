@@ -1,0 +1,28 @@
+// The example on Cloudflare Workers: the Worker of example.worker with
+// dist/public as its static assets (the page's script and stylesheet,
+// served before the Worker runs) and one Durable Object class, Page.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "rframes-worker-example",
+  "main": "dist/worker/example.js",
+  "compatibility_date": "2026-10-01",
+  // node:zlib, for the brotli of the frame stream
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist/public"
+  },
+  "durable_objects": {
+    "bindings": [
+      { "name": "PAGE", "class_name": "Page" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["Page"] }
+  ],
+  // on IPv4: `localhost` resolves to ::1 on some machines, which workerd
+  // cannot bind
+  "dev": {
+    "ip": "127.0.0.1",
+    "port": 8787
+  }
+}

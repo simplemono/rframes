@@ -1,0 +1,7 @@
+;; The build options of cljf (clojurific) for the tests under Node:
+;; `cljf -A:test build @cljs.edn :test`.
+{:paths ["src" "test"]
+ :profiles {:test {:output-dir "target/test"
+                   :test-runner {:ns rframes.worker.test-runner
+                                 :ns-regexp "-test$"
+                                 :runner cljf.esm.node-test/run}}}}
