@@ -6,8 +6,10 @@
   "name": "rframes-worker-example",
   "main": "dist/worker/example.js",
   "compatibility_date": "2026-10-01",
-  // node:zlib, for the brotli of the frame stream
-  "compatibility_flags": ["nodejs_compat"],
+  // nodejs_compat: node:zlib, for the brotli of the frame stream.
+  // enable_request_signal: the Worker sees a tab go at once and closes
+  // its socket to the Object (the default from compatibility date 2026-11-17).
+  "compatibility_flags": ["nodejs_compat", "enable_request_signal"],
   "assets": {
     "directory": "./dist/public"
   },

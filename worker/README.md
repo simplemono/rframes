@@ -212,15 +212,20 @@ sent when it sleeps.
 {
   "main": "dist/worker/example.js",
   "compatibility_date": "2026-10-01",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": ["nodejs_compat", "enable_request_signal"],
   "assets": { "directory": "./dist/public" },
   "durable_objects": { "bindings": [{ "name": "PAGE", "class_name": "Page" }] },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Page"] }]
 }
 ```
 
-`nodejs_compat` is for `node:zlib`, the encoder of the stream. The
-static assets carry the page's script and stylesheet, and Cloudflare
+`nodejs_compat` is for `node:zlib`, the encoder of the stream.
+`enable_request_signal` lets the Worker see a tab go at once, so it
+closes its socket to the Object within a second. Without the flag the
+relay finds out when it cannot write a heartbeat, which takes up to two
+of them. The flag is the default from compatibility date 2026-11-17.
+`wrangler dev` hides the disconnect either way, there it is always the
+heartbeat. The static assets carry the page's script and stylesheet, and Cloudflare
 serves them before the Worker runs. The Vite plugin of clojurific
 exports the handler and the class from one bundle. `example/` has both
 Vite configs.
