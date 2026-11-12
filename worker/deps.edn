@@ -1,0 +1,6 @@
+;; The Cloudflare half: rframes on a Worker with a Durable Object, compiled
+;; by clojurific. Transit is the wire, as in the other two modules.
+{:paths ["src"]
+ :deps {com.whimsical/clojurific {:mvn/version "0.12.15"}
+        com.cognitect/transit-cljs {:mvn/version "0.8.280"}}
+ :aliases {:test {:extra-paths ["test"]}}}
